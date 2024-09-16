@@ -12,32 +12,35 @@ class PermissionHandlerService {
       if (sdkInt >= 33) {
         // For Android 13 (SDK 33) and above
         var permissions = await [
+          Permission.camera,
           Permission.photos,
           Permission.videos,
-          Permission.audio,
-          Permission.camera, // Camera permission
-          // Permission.notification,     // Notification permission
+          Permission.mediaLibrary, // For managing media files
         ].request();
+
         print(permissions);
         return permissions.values.every((status) => status.isGranted);
       } else {
         // For older Android versions
-        var status = await [
+        var permissions = await [
+          Permission.camera,
           Permission.storage,
-          Permission.camera, // Camera permission
-          // Permission.notification,     // Notification permission
+          Permission.photos,
+          Permission.videos,
+          // Note: Media permissions are not necessary for older versions
         ].request();
 
-        return status.values.every((status) => status.isGranted);
+        print(permissions);
+        return permissions.values.every((status) => status.isGranted);
       }
     } else if (Platform.isIOS) {
       // iOS specific permission handling
       var permissions = await [
         Permission.photos,
-        Permission.camera, // Camera permission
-        // Permission.notification,     // Notification permission
+        Permission.camera,
       ].request();
 
+      print(permissions);
       return permissions.values.every((status) => status.isGranted);
     }
 

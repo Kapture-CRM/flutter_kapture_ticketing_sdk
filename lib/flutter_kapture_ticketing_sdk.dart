@@ -81,6 +81,7 @@ class _InAppWebViewExampleState extends State<InAppWebViewExample> {
             child: Text(
               'Storage permission is required to proceed',
               style: TextStyle(fontSize: 24),
+              textAlign: TextAlign.center,
             ),
           ),
           const SizedBox(height: 10),
