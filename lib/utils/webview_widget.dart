@@ -3,8 +3,9 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class WebviewWidget extends StatefulWidget {
   final String url;
+  final String fcmToken;
 
-  const WebviewWidget({required this.url});
+  const WebviewWidget({required this.url, required this.fcmToken});
 
   @override
   State<WebviewWidget> createState() => _WebviewWidgetState();
@@ -13,12 +14,13 @@ class WebviewWidget extends StatefulWidget {
 class _WebviewWidgetState extends State<WebviewWidget> {
   InAppWebViewController? _webViewController;
 
+
   @override
   void didUpdateWidget(covariant WebviewWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     // Check if the URL has changed and reload the WebView
       _webViewController?.loadUrl(
-        urlRequest: URLRequest(url: WebUri(widget.url)),
+        urlRequest: URLRequest(url: WebUri("${widget.url}?fcmToken=${widget.fcmToken}")),
       );
   }
 
@@ -29,7 +31,7 @@ class _WebviewWidgetState extends State<WebviewWidget> {
         children: [
           InAppWebView(
             initialUrlRequest: URLRequest(
-              url: WebUri(widget.url), // Use the passed URL
+              url: WebUri("${widget.url}?fcmToken=${widget.fcmToken}"), // Use the passed URL
             ),
             initialSettings: InAppWebViewSettings(
               mediaPlaybackRequiresUserGesture: false,
@@ -41,9 +43,6 @@ class _WebviewWidgetState extends State<WebviewWidget> {
               _webViewController = controller;
             },
             onLoadStart: (controller, url) {
-              setState(() {
-                // _isLoading = true; // Show loader when loading starts
-              });
             },
             onLoadStop: (controller, url) {
               setState(() {
@@ -69,8 +68,7 @@ class _WebviewWidgetState extends State<WebviewWidget> {
               // Handle download requests if needed
             },
             shouldOverrideUrlLoading: (controller, navigationAction) async {
-              // Override URL loading if needed
-              var uri = navigationAction.request.url;
+
               return NavigationActionPolicy.ALLOW;
             },
             androidOnPermissionRequest: (controller, origin, resources) async {

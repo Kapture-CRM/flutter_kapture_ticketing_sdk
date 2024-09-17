@@ -4,8 +4,9 @@ import 'package:flutter_kapture_ticketing_sdk/utils/permission_handler_service.d
 
 class KapturePackage extends StatefulWidget {
   final String url;
+  final String fcmToken;
 
-  const KapturePackage({super.key, required this.url});
+  const KapturePackage({super.key, required this.url, required this.fcmToken});
 
   @override
   _KapturePackageState createState() => _KapturePackageState();
@@ -52,7 +53,7 @@ class _KapturePackageState extends State<KapturePackage> {
           child: _isLoading? const Center(child: CircularProgressIndicator()):
               !_isConnected
               ? _buildNoConnectionMessage()
-              : WebviewWidget(url: widget.url),
+              : WebviewWidget(url: widget.url, fcmToken: widget.fcmToken),
         ));
   }
 
