@@ -56,31 +56,6 @@ class _KapturePackageState extends State<KapturePackage> {
         ));
   }
 
-  // Widget to display when permission is not granted
-  Widget _buildPermissionRequest() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.error, size: 100, color: Colors.red),
-          const SizedBox(height: 20),
-          const Center(
-            child: Text(
-              'Storage permission is required to proceed',
-              style: TextStyle(fontSize: 24),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          const SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: _checkStoragePermission,
-            child: const Text('Grant Permission'),
-          ),
-        ],
-      ),
-    );
-  }
-
   // Widget to display when not connected to the internet
   Widget _buildNoConnectionMessage() {
     return Center(
@@ -93,6 +68,7 @@ class _KapturePackageState extends State<KapturePackage> {
           Text(
             'No internet connection',
             style: TextStyle(fontSize: 24),
+            textAlign: TextAlign.center,
           )
           ),
           const SizedBox(height: 10),
