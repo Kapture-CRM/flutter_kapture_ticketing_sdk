@@ -45,14 +45,8 @@ class _WebviewWidgetState extends State<WebviewWidget> {
             onLoadStart: (controller, url) {
             },
             onLoadStop: (controller, url) {
-              setState(() {
-                // _isLoading = false; // Hide loader when loading stops
-              });
             },
             onLoadError: (controller, url, code, message) {
-              setState(() {
-                // _isLoading = false; // Hide loader if there is an error
-              });
             },
             onConsoleMessage: (controller, consoleMessage) async {
               // Print console logs
