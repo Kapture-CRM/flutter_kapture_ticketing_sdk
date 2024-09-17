@@ -53,7 +53,7 @@ class _KapturePackageState extends State<KapturePackage> {
           child: _isLoading? const Center(child: CircularProgressIndicator()):
               !_isConnected
               ? _buildNoConnectionMessage()
-              : WebviewWidget(url: "https://goldenrama.kapturecrm.com/nui_develop/build_36998", fcmToken: widget.fcmToken),
+              : WebviewWidget(url: "https://goldenrama.kapturecrm.com/nui_develop/qk_2", fcmToken: widget.fcmToken),
         ));
   }
 
