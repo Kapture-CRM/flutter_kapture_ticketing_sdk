@@ -33,14 +33,11 @@ class _WebviewWidgetState extends State<WebviewWidget> {
             initialUrlRequest: URLRequest(
               url: WebUri(widget.url), // Use the passed URL
             ),
-            initialOptions: InAppWebViewGroupOptions(
-              crossPlatform: InAppWebViewOptions(
-                javaScriptEnabled: true, // Enable JavaScript
-                mediaPlaybackRequiresUserGesture: false, // For media playback
-              ),
-              android: AndroidInAppWebViewOptions(
-                useHybridComposition: true, // Better performance
-              ),
+            initialSettings: InAppWebViewSettings(
+              mediaPlaybackRequiresUserGesture: false,
+              useHybridComposition: true,
+              allowsInlineMediaPlayback: true,
+              javaScriptEnabled: true
             ),
             onWebViewCreated: (InAppWebViewController controller) {
               _webViewController = controller;

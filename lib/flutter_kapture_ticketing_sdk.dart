@@ -2,18 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_kapture_ticketing_sdk/utils/webview_widget.dart'; // Replace this with the correct path for WebviewWidget
 import 'package:flutter_kapture_ticketing_sdk/utils/permission_handler_service.dart'; // Import the PermissionHandlerService
 
-class InAppWebViewExample extends StatefulWidget {
+class KapturePackage extends StatefulWidget {
   final String url;
 
-  const InAppWebViewExample({super.key, required this.url});
+  const KapturePackage({super.key, required this.url});
 
   @override
-  _InAppWebViewExampleState createState() => _InAppWebViewExampleState();
+  _KapturePackageState createState() => _KapturePackageState();
 }
 
-class _InAppWebViewExampleState extends State<InAppWebViewExample> {
+class _KapturePackageState extends State<KapturePackage> {
   bool _isConnected = true;
-  bool _hasStoragePermission = false;
   bool _isLoading = true; // Track loading state
 
   final PermissionHandlerService _permissionHandlerService =
@@ -22,7 +21,7 @@ class _InAppWebViewExampleState extends State<InAppWebViewExample> {
   @override
   void initState() {
     super.initState();
-    // _checkInternetConnection();
+    _checkInternetConnection();
     _checkStoragePermission();
   }
 
@@ -43,27 +42,15 @@ class _InAppWebViewExampleState extends State<InAppWebViewExample> {
     setState(() {
       _isLoading = true;
     });
-    bool hasPermission =
-    await _permissionHandlerService.checkAndRequestPermissions();
-    setState(() {
-      _hasStoragePermission = hasPermission;
-    });
-    if(hasPermission){
-      _checkInternetConnection();
-    } else{
-      setState(() {
-        _isLoading = false;
-      });
-    }
+    bool hasPermission = await _permissionHandlerService.checkAndRequestPermissions();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
-          child: _isLoading? Center(child: CircularProgressIndicator()):
-          !_hasStoragePermission
-              ? _buildPermissionRequest():!_isConnected
+          child: _isLoading? const Center(child: CircularProgressIndicator()):
+              !_isConnected
               ? _buildNoConnectionMessage()
               : WebviewWidget(url: widget.url),
         ));
