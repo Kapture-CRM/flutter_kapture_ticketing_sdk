@@ -11,8 +11,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
 
-    <application
-        android:icon="@mipmap/ic_launcher">
+    <application>
         <!-- Other application-level configurations -->
         <provider
             android:name="com.pichillilorenzo.flutter_inappwebview_android.InAppWebViewFileProvider"
