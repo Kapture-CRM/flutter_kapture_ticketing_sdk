@@ -17,11 +17,9 @@ class _WebviewWidgetState extends State<WebviewWidget> {
   void didUpdateWidget(covariant WebviewWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     // Check if the URL has changed and reload the WebView
-    if (oldWidget.url != widget.url) {
       _webViewController?.loadUrl(
         urlRequest: URLRequest(url: WebUri(widget.url)),
       );
-    }
   }
 
   @override
