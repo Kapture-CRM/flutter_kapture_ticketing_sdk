@@ -52,7 +52,7 @@ class _WebviewWidgetState extends State<WebviewWidget> {
               // Print console logs
               final url = await controller.getUrl();
 
-              // Print the URL and Console Messages
+              //  the URL and Console Messages
               print('Console Log from URL: ${url.toString()}'); // Correctly print the URL
               print('Console Log from URL: ${controller.getUrl().toString()}');
               print('Console Log Message: ${consoleMessage.message}');
