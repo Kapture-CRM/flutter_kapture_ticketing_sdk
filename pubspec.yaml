@@ -14,6 +14,9 @@ dependencies:
   permission_handler: ^10.2.0  # or the latest version
   flutter_inappwebview: ^6.0.0
   device_info_plus: ^10.0.1 # check for the latest version
+  url_launcher: ^6.1.7
+  fluttertoast: ^8.0.9
+
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 class WebviewWidget extends StatefulWidget {
   final String url;
@@ -41,12 +44,47 @@ class _WebviewWidgetState extends State<WebviewWidget> {
             ),
             onWebViewCreated: (InAppWebViewController controller) {
               _webViewController = controller;
+              // Setting up a JavaScript handler that listens for the "callPhone" event
+              _webViewController?.addJavaScriptHandler(
+                handlerName: 'callPhone',
+                callback: (args) async {
+                  // Extract the phone number from the arguments
+                  String phoneNumber = args[0];
+                  // Validate phone number (10 digits, all numbers)
+                  RegExp regExp = RegExp(r'^\d{10}$');
+                  if (regExp.hasMatch(phoneNumber)) {
+                    // Open the dialer with the phone number
+                    String url = 'tel:+91$phoneNumber';
+                    if (await canLaunch(url)) {
+                      await launch(url);
+                    } else {
+                      // Show toast message for invalid phone number
+                      Fluttertoast.showToast(
+                        msg: "Failed to call: $phoneNumber",
+                        toastLength: Toast.LENGTH_LONG,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 16.0,
+                      );
+                    }
+                  } else{
+                    // Show toast message for invalid phone number
+                    Fluttertoast.showToast(
+                      msg: "Invalid phone number: $phoneNumber",
+                      toastLength: Toast.LENGTH_LONG,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0,
+                    );
+                  }
+                },
+              );
             },
             onLoadStart: (controller, url) {
-            },
-            onLoadStop: (controller, url) {
-            },
-            onLoadError: (controller, url, code, message) {
             },
             onConsoleMessage: (controller, consoleMessage) async {
               // Print console logs
@@ -62,7 +100,6 @@ class _WebviewWidgetState extends State<WebviewWidget> {
               // Handle download requests if needed
             },
             shouldOverrideUrlLoading: (controller, navigationAction) async {
-
               return NavigationActionPolicy.ALLOW;
             },
             androidOnPermissionRequest: (controller, origin, resources) async {
@@ -82,8 +119,19 @@ class _WebviewWidgetState extends State<WebviewWidget> {
               );
             },
           ),
-          // Show a CircularProgressIndicator while the WebView is loading
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () async {
+              // Manually trigger the handler as if it's coming from the React side
+              String testPhoneNumber = "1234567890";
 
+              // This simulates the React call to Flutter
+              await _webViewController?.evaluateJavascript(source: """
+                window.flutter_inappwebview.callHandler('callPhone', '$testPhoneNumber');
+              """);
+            },
+            child: Text("Simulate Phone Call"),
+          ),
         ],
       ),
     );
