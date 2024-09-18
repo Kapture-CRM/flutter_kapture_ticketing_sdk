@@ -3,7 +3,6 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-
 class WebviewWidget extends StatefulWidget {
   final String url;
   final String fcmToken;
@@ -17,14 +16,14 @@ class WebviewWidget extends StatefulWidget {
 class _WebviewWidgetState extends State<WebviewWidget> {
   InAppWebViewController? _webViewController;
 
-
   @override
   void didUpdateWidget(covariant WebviewWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     // Check if the URL has changed and reload the WebView
-      _webViewController?.loadUrl(
-        urlRequest: URLRequest(url: WebUri("${widget.url}?fcmToken=${widget.fcmToken}")),
-      );
+    _webViewController?.loadUrl(
+      urlRequest:
+          URLRequest(url: WebUri("${widget.url}?fcmToken=${widget.fcmToken}")),
+    );
   }
 
   @override
@@ -34,14 +33,14 @@ class _WebviewWidgetState extends State<WebviewWidget> {
         children: [
           InAppWebView(
             initialUrlRequest: URLRequest(
-              url: WebUri("${widget.url}?fcmToken=${widget.fcmToken}"), // Use the passed URL
+              url: WebUri(
+                  "${widget.url}?fcmToken=${widget.fcmToken}"), // Use the passed URL
             ),
             initialSettings: InAppWebViewSettings(
-              mediaPlaybackRequiresUserGesture: false,
-              useHybridComposition: true,
-              allowsInlineMediaPlayback: true,
-              javaScriptEnabled: true
-            ),
+                mediaPlaybackRequiresUserGesture: false,
+                useHybridComposition: true,
+                allowsInlineMediaPlayback: true,
+                javaScriptEnabled: true),
             onWebViewCreated: (InAppWebViewController controller) {
               _webViewController = controller;
               // Setting up a JavaScript handler that listens for the "callPhone" event
@@ -69,7 +68,7 @@ class _WebviewWidgetState extends State<WebviewWidget> {
                         fontSize: 16.0,
                       );
                     }
-                  } else{
+                  } else {
                     // Show toast message for invalid phone number
                     Fluttertoast.showToast(
                       msg: "Invalid phone number: $phoneNumber",
@@ -84,14 +83,14 @@ class _WebviewWidgetState extends State<WebviewWidget> {
                 },
               );
             },
-            onLoadStart: (controller, url) {
-            },
+            onLoadStart: (controller, url) {},
             onConsoleMessage: (controller, consoleMessage) async {
               // Print console logs
               final url = await controller.getUrl();
 
               //  the URL and Console Messages
-              print('Console Log from URL: ${url.toString()}'); // Correctly print the URL
+              print(
+                  'Console Log from URL: ${url.toString()}'); // Correctly print the URL
               print('Console Log from URL: ${controller.getUrl().toString()}');
               print('Console Log Message: ${consoleMessage.message}');
               print('Log Level: ${consoleMessage.messageLevel}');
@@ -124,7 +123,6 @@ class _WebviewWidgetState extends State<WebviewWidget> {
             onPressed: () async {
               // Manually trigger the handler as if it's coming from the React side
               String testPhoneNumber = "1234567890";
-
               // This simulates the React call to Flutter
               await _webViewController?.evaluateJavascript(source: """
                 window.flutter_inappwebview.callHandler('callPhone', '$testPhoneNumber');
