@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
@@ -14,14 +16,14 @@ class WebviewWidget extends StatefulWidget {
 class _WebviewWidgetState extends State<WebviewWidget> {
   InAppWebViewController? _webViewController;
 
-
   @override
   void didUpdateWidget(covariant WebviewWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     // Check if the URL has changed and reload the WebView
-      _webViewController?.loadUrl(
-        urlRequest: URLRequest(url: WebUri("${widget.url}?fcmToken=${widget.fcmToken}")),
-      );
+    _webViewController?.loadUrl(
+      urlRequest:
+          URLRequest(url: WebUri("${widget.url}?fcmToken=${widget.fcmToken}")),
+    );
   }
 
   @override
@@ -31,29 +33,41 @@ class _WebviewWidgetState extends State<WebviewWidget> {
         children: [
           InAppWebView(
             initialUrlRequest: URLRequest(
-              url: WebUri("${widget.url}?fcmToken=${widget.fcmToken}"), // Use the passed URL
+              url: WebUri(
+                  "${widget.url}?fcmToken=${widget.fcmToken}"), // Use the passed URL
             ),
             initialSettings: InAppWebViewSettings(
-              mediaPlaybackRequiresUserGesture: false,
-              useHybridComposition: true,
-              allowsInlineMediaPlayback: true,
-              javaScriptEnabled: true
-            ),
-            onWebViewCreated: (InAppWebViewController controller) {
+                mediaPlaybackRequiresUserGesture: false,
+                useHybridComposition: true,
+                allowsInlineMediaPlayback: true,
+                javaScriptEnabled: true),
+            onWebViewCreated: (InAppWebViewController controller) async {
               _webViewController = controller;
+              Uri uri = Uri.parse(widget.url);
+              String origin =
+                  "${uri.scheme}://${uri.host}${uri.hasPort ? ':${uri.port}' : ''}";
+              // Define the JSON data
+              var jsonData = {
+                "type": "MOBILE_WEB_VIEW_DATA",
+                "payload": base64Encode(
+                    utf8.encode(jsonEncode({"_fcmToken": widget.fcmToken})))
+              };
+              // Convert JSON data to string and then encode to Base64
+              String payload = jsonEncode(jsonData);
+              await _webViewController?.evaluateJavascript(source: """
+                window.postMessage('$payload', '$origin');
+              """);
             },
-            onLoadStart: (controller, url) {
-            },
-            onLoadStop: (controller, url) {
-            },
-            onLoadError: (controller, url, code, message) {
-            },
+            onLoadStart: (controller, url) {},
+            onLoadStop: (controller, url) {},
+            onLoadError: (controller, url, code, message) {},
             onConsoleMessage: (controller, consoleMessage) async {
               // Print console logs
               final url = await controller.getUrl();
 
               //  the URL and Console Messages
-              print('Console Log from URL: ${url.toString()}'); // Correctly print the URL
+              print(
+                  'Console Log from URL: ${url.toString()}'); // Correctly print the URL
               print('Console Log from URL: ${controller.getUrl().toString()}');
               print('Console Log Message: ${consoleMessage.message}');
               print('Log Level: ${consoleMessage.messageLevel}');
@@ -62,7 +76,6 @@ class _WebviewWidgetState extends State<WebviewWidget> {
               // Handle download requests if needed
             },
             shouldOverrideUrlLoading: (controller, navigationAction) async {
-
               return NavigationActionPolicy.ALLOW;
             },
             androidOnPermissionRequest: (controller, origin, resources) async {
@@ -82,8 +95,6 @@ class _WebviewWidgetState extends State<WebviewWidget> {
               );
             },
           ),
-          // Show a CircularProgressIndicator while the WebView is loading
-
         ],
       ),
     );
