@@ -19,20 +19,6 @@ class KaptureUtils {
 
     var payload = notificationResponse?.notificationResponse;
 
-    // Fluttertoast.showToast(
-    //     msg: res.toString(),
-    //     // The message to display
-    //     toastLength: Toast.LENGTH_LONG,
-    //     // Duration (short or long)
-    //     gravity: ToastGravity.BOTTOM,
-    //     // Position of the toast (bottom, center, top)
-    //     backgroundColor: Colors.black,
-    //     // Background color of the toast
-    //     textColor: Colors.white,
-    //     // Text color
-    //     fontSize: 16.0 // Font size of the message
-    //     );
-
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
