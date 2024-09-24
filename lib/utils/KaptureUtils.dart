@@ -26,7 +26,9 @@ class KaptureUtils {
             iOS: DarwinInitializationSettings(
                 requestAlertPermission: true,
                 requestBadgePermission: true,
-                requestSoundPermission: true));
+                requestSoundPermission: true
+            )
+        );
 
     _flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
@@ -64,7 +66,6 @@ class KaptureUtils {
         android: androidNotificationDetails,
         iOS: iOSPlatformChannelSpecifics,
       );
-
       await _flutterLocalNotificationsPlugin.show(
         0,
         message.data["title"],
