@@ -15,22 +15,42 @@ class WebviewWidget extends StatefulWidget {
 
 class _WebviewWidgetState extends State<WebviewWidget> {
   InAppWebViewController? _webViewController;
+  String? lastVisitedUrl; // To track the last visited URL
 
   @override
   void didUpdateWidget(covariant WebviewWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Check if the URL has changed and reload the WebView
     _webViewController?.loadUrl(
       urlRequest:
-          URLRequest(url: WebUri("${widget.url}?fcmToken=${widget.fcmToken}")),
+          URLRequest(url: WebUri("${widget.url}")),
     );
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     print("token${widget.fcmToken}");
     super.initState();
+  }
+
+  Future<void> addEventListener() async {
+    Uri uri = Uri.parse(widget.url);
+    String origin =
+        "${uri.scheme}://${uri.host}${uri.hasPort ? ':${uri.port}' : ''}";
+    var jsonData = {
+      "type": "MOBILE_WEB_VIEW_DATA",
+      "payload": base64Encode(
+          utf8.encode(jsonEncode({"_fcmToken": widget.fcmToken})))
+    };
+    String jsonString = json.encode(jsonData);
+    await _webViewController!.evaluateJavascript(source: """
+      console.log("#############-1");
+      window.addEventListener('message', function(event) {
+        console.log("#############-5", typeof event.data);
+        if(event.data.type=="NUI_LOADED"){
+          window.postMessage($jsonString, '$origin');
+        }
+      })"""
+    );
   }
 
   @override
@@ -39,59 +59,47 @@ class _WebviewWidgetState extends State<WebviewWidget> {
       body: Stack(
         children: [
           InAppWebView(
-            initialUrlRequest: URLRequest(
-              url: WebUri(
-                  "${widget.url}?fcmToken=${widget.fcmToken}"), // Use the passed URL
-            ),
-            initialSettings: InAppWebViewSettings(
+            initialUrlRequest: URLRequest(url: WebUri("${widget.url}")),
+            initialSettings:
+              InAppWebViewSettings(
                 mediaPlaybackRequiresUserGesture: false,
                 useHybridComposition: true,
                 allowsInlineMediaPlayback: true,
-                javaScriptEnabled: true),
+                javaScriptEnabled: true
+              ),
             onWebViewCreated: (controller) async {
               _webViewController = controller;
-              Uri uri = Uri.parse(widget.url);
-              String origin =
-                  "${uri.scheme}://${uri.host}${uri.hasPort ? ':${uri.port}' : ''}";
-              // Define the JSON data
-              var jsonData = {
-                "type": "MOBILE_WEB_VIEW_DATA",
-                "payload": base64Encode(
-                    utf8.encode(jsonEncode({"_fcmToken": widget.fcmToken})))
-              };
-              // Convert JSON data to string and then encode to Base64
-              String payload = jsonEncode(jsonData);
-              // Set up the event listener to listen for messages from Flutter
-              await _webViewController!.evaluateJavascript(source: """
-            window.addEventListener('message', function(event) {
-              console.log(event.data);
-              if(event.data.type=="NUI_LOADED"){
-                window.postMessage('$payload', '$origin');
-              }
-            });
-          """);
+              await addEventListener();
             },
-            onLoadStart: (controller, url) {},
-            onLoadStop: (controller, url) {},
+            onUpdateVisitedHistory: (controller, url, androidIsReload) async {
+              if (url != null && !url.toString().contains("login")) {
+                if (!url.queryParameters.containsKey("webView")) {
+                  Uri modifiedUrl = url.replace(queryParameters: {
+                    "webView": "webView", // Add your custom parameter
+                  });
+                  await _webViewController?.loadUrl(urlRequest: URLRequest(
+                      url: WebUri(modifiedUrl.toString())));
+                }
+              }
+            },
+            onLoadStart: (controller, url) async {},
+            onLoadStop: (controller, url) async {
+              await addEventListener();
+            },
             onLoadError: (controller, url, code, message) {},
             onConsoleMessage: (controller, consoleMessage) async {
-              // Print console logs
               final url = await controller.getUrl();
-              //  the URL and Console Messages
               print(
                   'Console Log from URL: ${url.toString()}'); // Correctly print the URL
               print('Console Log from URL: ${controller.getUrl().toString()}');
               print('Console Log Message: ${consoleMessage.message}');
               print('Log Level: ${consoleMessage.messageLevel}');
             },
-            onDownloadStartRequest: (controller, downloadStartRequest) {
-              // Handle download requests if needed
-            },
+            onDownloadStartRequest: (controller, downloadStartRequest) {},
             shouldOverrideUrlLoading: (controller, navigationAction) async {
               return NavigationActionPolicy.ALLOW;
             },
             androidOnPermissionRequest: (controller, origin, resources) async {
-              // Handle permission requests (e.g., camera, mic, etc.)
               return PermissionRequestResponse(
                 resources: resources,
                 action: PermissionRequestResponseAction.GRANT,

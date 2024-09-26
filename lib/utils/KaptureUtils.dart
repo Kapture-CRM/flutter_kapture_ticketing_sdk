@@ -10,7 +10,7 @@ class KaptureUtils {
 
   static void initializeKaptureNotifications(
       // Listen for local notification taps
-      GlobalKey<NavigatorState> navigationKey) async {
+      GlobalKey<NavigatorState> navigationKey, String? route) async {
     NotificationAppLaunchDetails? notificationResponse =
         await _flutterLocalNotificationsPlugin
             .getNotificationAppLaunchDetails();
@@ -34,13 +34,13 @@ class KaptureUtils {
       initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
         // Handle notification tap
-        _handleKaptureNotification(response, navigationKey, "");
+        _handleKaptureNotification(response, navigationKey, route);
       },
     );
 
     if (payload != null) {
       Timer(Duration(seconds: 3), () {
-        _handleKaptureNotification(payload, navigationKey, "");
+        _handleKaptureNotification(payload, navigationKey, route);
       });
     }
   }
@@ -79,10 +79,9 @@ class KaptureUtils {
   }
 
   static Future<void> _handleKaptureNotification(NotificationResponse message,
-      GlobalKey<NavigatorState> navigationKey, String route) async {
-    String? route = '/yourRoute';
+      GlobalKey<NavigatorState> navigationKey, String? route) async {
     if (route != null) {
-      navigationKey.currentState?.pushNamed('/yourRoute');
+      navigationKey.currentState?.pushNamed(route);
     }
   }
 }
