@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_kapture_ticketing_sdk/utils/webview_widget.dart'; // Replace this with the correct path for WebviewWidget
 import 'package:flutter_kapture_ticketing_sdk/utils/permission_handler_service.dart'; // Import the PermissionHandlerService
 
@@ -13,6 +14,7 @@ class KapturePackage extends StatefulWidget {
 }
 
 class _KapturePackageState extends State<KapturePackage> {
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   bool _isConnected = true;
   bool _isLoading = true; // Track loading state
 
@@ -43,7 +45,7 @@ class _KapturePackageState extends State<KapturePackage> {
     setState(() {
       _isLoading = true;
     });
-    bool hasPermission = await _permissionHandlerService.checkAndRequestPermissions();
+    await _permissionHandlerService.checkAndRequestPermissions();
   }
 
   @override
@@ -53,8 +55,9 @@ class _KapturePackageState extends State<KapturePackage> {
           child: _isLoading? const Center(child: CircularProgressIndicator()):
               !_isConnected
               ? _buildNoConnectionMessage()
-              : WebviewWidget(url: "https://goldenrama.kapturecrm.com/nui_develop/qk_2", fcmToken: widget.fcmToken),
-        ));
+              : WebviewWidget(url: widget.url, fcmToken: widget.fcmToken),
+        )
+    );
   }
 
   // Widget to display when not connected to the internet

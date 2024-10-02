@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class WebviewWidget extends StatefulWidget {
   final String url;
@@ -15,7 +16,6 @@ class WebviewWidget extends StatefulWidget {
 
 class _WebviewWidgetState extends State<WebviewWidget> {
   InAppWebViewController? _webViewController;
-  String? lastVisitedUrl; // To track the last visited URL
 
   @override
   void didUpdateWidget(covariant WebviewWidget oldWidget) {
@@ -45,7 +45,7 @@ class _WebviewWidgetState extends State<WebviewWidget> {
     await _webViewController!.evaluateJavascript(source: """
       console.log("#############-1");
       window.addEventListener('message', function(event) {
-        console.log("#############-5", typeof event.data);
+        console.log("#############-5", JSON.stringify(event.data));
         if(event.data.type=="NUI_LOADED"){
           window.postMessage($jsonString, '$origin');
         }
@@ -87,14 +87,11 @@ class _WebviewWidgetState extends State<WebviewWidget> {
               await addEventListener();
             },
             onLoadError: (controller, url, code, message) {},
-            onConsoleMessage: (controller, consoleMessage) async {
-              final url = await controller.getUrl();
-              print(
-                  'Console Log from URL: ${url.toString()}'); // Correctly print the URL
-              print('Console Log from URL: ${controller.getUrl().toString()}');
-              print('Console Log Message: ${consoleMessage.message}');
-              print('Log Level: ${consoleMessage.messageLevel}');
-            },
+            // onConsoleMessage: (controller, consoleMessage) async {
+            //   final url = await controller.getUrl();
+            //   print(
+            //       'Console Log from URL: ${url.toString()}'); // Correctly print the URL
+            // },
             onDownloadStartRequest: (controller, downloadStartRequest) {},
             shouldOverrideUrlLoading: (controller, navigationAction) async {
               return NavigationActionPolicy.ALLOW;

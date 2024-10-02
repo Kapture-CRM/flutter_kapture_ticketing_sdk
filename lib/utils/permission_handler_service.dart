@@ -2,19 +2,20 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+
 class PermissionHandlerService {
   Future<bool> checkAndRequestPermissions() async {
     if (Platform.isAndroid) {
       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
       int sdkInt = androidInfo.version.sdkInt ?? 0;
-
       if (sdkInt >= 33) {
         // For Android 13 (SDK 33) and above
         var permissions = await [
           Permission.camera,
           Permission.photos,
           Permission.videos,
+          Permission.notification,
           Permission.mediaLibrary, // For managing media files
         ].request();
 
@@ -26,11 +27,10 @@ class PermissionHandlerService {
           Permission.camera,
           Permission.storage,
           Permission.photos,
+          Permission.notification,
           Permission.videos,
           // Note: Media permissions are not necessary for older versions
         ].request();
-
-        print(permissions);
         return permissions.values.every((status) => status.isGranted);
       }
     } else if (Platform.isIOS) {
@@ -38,12 +38,10 @@ class PermissionHandlerService {
       var permissions = await [
         Permission.photos,
         Permission.camera,
+        Permission.notification,
       ].request();
-
-      print(permissions);
       return permissions.values.every((status) => status.isGranted);
     }
-
     return false;
   }
 

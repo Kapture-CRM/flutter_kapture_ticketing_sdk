@@ -14,10 +14,8 @@ dependencies:
   permission_handler: ^10.2.0  # or the latest version
   flutter_inappwebview: ^6.0.0
   device_info_plus: ^10.0.1 # check for the latest version
-  firebase_core: ^2.15.0
-  firebase_messaging: 14.7.10
+  firebase_messaging: ^14.7.10
   flutter_local_notifications: ^17.2.2
-  fluttertoast: ^8.2.1
 
 dev_dependencies:
   flutter_test:

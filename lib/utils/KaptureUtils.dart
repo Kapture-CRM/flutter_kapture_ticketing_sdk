@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -32,14 +31,14 @@ class KaptureUtils {
 
     _flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      onDidReceiveNotificationResponse: (NotificationResponse response) {
+      onDidReceiveNotificationResponse: (NotificationResponse response) async {
         // Handle notification tap
         _handleKaptureNotification(response, navigationKey, route);
       },
     );
 
     if (payload != null) {
-      Timer(Duration(seconds: 3), () {
+      Timer(const Duration(seconds: 3), () {
         _handleKaptureNotification(payload, navigationKey, route);
       });
     }
