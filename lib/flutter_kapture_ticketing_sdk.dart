@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_kapture_ticketing_sdk/utils/webview_widget.dart'; // Replace this with the correct path for WebviewWidget
 import 'package:flutter_kapture_ticketing_sdk/utils/permission_handler_service.dart'; // Import the PermissionHandlerService
 
 class KapturePackage extends StatefulWidget {
   final String url;
-  final String fcmToken;
+  final String? fcmToken;
 
   const KapturePackage({super.key, required this.url, required this.fcmToken});
 
@@ -14,7 +13,6 @@ class KapturePackage extends StatefulWidget {
 }
 
 class _KapturePackageState extends State<KapturePackage> {
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   bool _isConnected = true;
   bool _isLoading = true; // Track loading state
 

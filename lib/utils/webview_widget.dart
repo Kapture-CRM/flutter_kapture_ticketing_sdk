@@ -1,12 +1,10 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class WebviewWidget extends StatefulWidget {
   final String url;
-  final String fcmToken;
+  final String? fcmToken;
 
   const WebviewWidget({required this.url, required this.fcmToken});
 
@@ -26,12 +24,6 @@ class _WebviewWidgetState extends State<WebviewWidget> {
     );
   }
 
-  @override
-  void initState() {
-    print("token${widget.fcmToken}");
-    super.initState();
-  }
-
   Future<void> addEventListener() async {
     Uri uri = Uri.parse(widget.url);
     String origin =
@@ -43,9 +35,7 @@ class _WebviewWidgetState extends State<WebviewWidget> {
     };
     String jsonString = json.encode(jsonData);
     await _webViewController!.evaluateJavascript(source: """
-      console.log("#############-1");
       window.addEventListener('message', function(event) {
-        console.log("#############-5", JSON.stringify(event.data));
         if(event.data.type=="NUI_LOADED"){
           window.postMessage($jsonString, '$origin');
         }
@@ -72,7 +62,7 @@ class _WebviewWidgetState extends State<WebviewWidget> {
               await addEventListener();
             },
             onUpdateVisitedHistory: (controller, url, androidIsReload) async {
-              if (url != null && !url.toString().contains("login")) {
+              if (url != null && !url.toString().contains("login") && (widget.fcmToken!=null && widget.fcmToken!.isNotEmpty)) {
                 if (!url.queryParameters.containsKey("webView")) {
                   Uri modifiedUrl = url.replace(queryParameters: {
                     "webView": "webView", // Add your custom parameter
@@ -87,11 +77,6 @@ class _WebviewWidgetState extends State<WebviewWidget> {
               await addEventListener();
             },
             onLoadError: (controller, url, code, message) {},
-            // onConsoleMessage: (controller, consoleMessage) async {
-            //   final url = await controller.getUrl();
-            //   print(
-            //       'Console Log from URL: ${url.toString()}'); // Correctly print the URL
-            // },
             onDownloadStartRequest: (controller, downloadStartRequest) {},
             shouldOverrideUrlLoading: (controller, navigationAction) async {
               return NavigationActionPolicy.ALLOW;

@@ -18,8 +18,6 @@ class PermissionHandlerService {
           Permission.notification,
           Permission.mediaLibrary, // For managing media files
         ].request();
-
-        print(permissions);
         return permissions.values.every((status) => status.isGranted);
       } else {
         // For older Android versions
