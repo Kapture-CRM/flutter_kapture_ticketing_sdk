@@ -65,13 +65,17 @@ class KaptureUtils {
         android: androidNotificationDetails,
         iOS: iOSPlatformChannelSpecifics,
       );
-      await _flutterLocalNotificationsPlugin.show(
-        0,
-        message.data["title"],
-        message.data["body"],
-        notificationDetails,
-        payload: message.data.toString(),
-      );
+      if (message.data.containsKey("title") && message.data.containsKey("body")) {
+        await _flutterLocalNotificationsPlugin.show(
+          0,
+          message.data["title"],
+          message.data["body"],
+          notificationDetails,
+          payload: message.data.toString(),
+        );
+      } else{
+        return false;
+      }
       return true;
     }
     return false;
