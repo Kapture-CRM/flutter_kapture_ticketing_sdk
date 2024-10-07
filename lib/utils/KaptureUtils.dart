@@ -45,7 +45,7 @@ class KaptureUtils {
   }
 
   static Future<bool> kaptureNotificationService(RemoteMessage message) async {
-    if (true) {
+    if (message.data["type"]=="KAPTURE_NOTIFICATION_SERVICE") {
       const AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
         'your_channel_id',
