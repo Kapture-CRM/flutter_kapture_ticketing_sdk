@@ -14,6 +14,15 @@ class WebviewWidget extends StatefulWidget {
 
 class _WebviewWidgetState extends State<WebviewWidget> {
   InAppWebViewController? _webViewController;
+  String oldPath = "";
+
+
+  @override
+  void initState() {
+    oldPath = WebUri(widget.url).path.toString();
+    super.initState();
+  }
+
 
   @override
   void didUpdateWidget(covariant WebviewWidget oldWidget) {
@@ -63,7 +72,8 @@ class _WebviewWidgetState extends State<WebviewWidget> {
             },
             onUpdateVisitedHistory: (controller, url, androidIsReload) async {
               if (url != null && !url.toString().contains("login") && (widget.fcmToken!=null && widget.fcmToken!.isNotEmpty)) {
-                if (!url.queryParameters.containsKey("webView")) {
+                if (!url.queryParameters.containsKey("webView") && oldPath!=url.path.toString()) {
+                  oldPath = url.path;
                   Uri modifiedUrl = url.replace(queryParameters: {
                     "webView": "webView", // Add your custom parameter
                   });
