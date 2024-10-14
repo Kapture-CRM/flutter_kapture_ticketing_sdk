@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_kapture_ticketing_sdk/flutter_kapture_ticketing_sdk.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class KaptureUtils {
@@ -109,10 +108,10 @@ class KaptureUtils {
           var messageObj = jsonDecode(response["message"]);
           if (messageObj["task"]["ticketId"] != null && messageObj["task"]["ticketId"] != "") {
             navigationKey.currentState?.pushNamed(route, arguments: {
-              'url': baseUrl + "/tickets/assigned_to_me/5/-1/0/detail/" +
-                  messageObj["task"]["ticketId"],
+              'url': "${"$baseUrl/tickets/assigned_to_me/5/-1/0/detail/" + messageObj["task"]["id"]}/" + messageObj["task"]["ticketId"],
             },);
-          } else {
+          }
+          else {
             navigationKey.currentState?.pushNamed(route, arguments: {
               'url': baseUrl,
             },);
@@ -128,6 +127,11 @@ class KaptureUtils {
             'url': (response.containsKey("url") && response["url"] != null)
                 ? response["url"]
                 : baseUrl,
+          },);
+        }
+        else if (response.containsKey("ticketId") && response.containsKey("taskId")) {
+          navigationKey.currentState?.pushNamed(route, arguments: {
+            'url': "$baseUrl/tickets/assigned_to_me/5/-1/0/detail/${response["taskId"]}/${response["ticketId"]}",
           },);
         }
         else {
